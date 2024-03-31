@@ -6,17 +6,17 @@ import Navbar from "./components/Navbar";
 
 function App() {
 	const { isLoggedIn } = useContext(AuthContext);
-	if (!isLoggedIn) return <Navigate to={"../login"} replace />;
+	if (!isLoggedIn) return <Navigate to={"/login"} replace />;
 
 	return (
 		<Container fluid>
-			<div className='grid grid-cols-12 h-dvh py-2'>
+			<div className='grid grid-cols-12 py-2'>
 				<div className='grid-span-1'>
-					<Navbar />
+					<Navbar className='fixed left-2 bottom-1 top-1' />
 				</div>
-				<Container size={"xl"} className='col-start-2 col-end-13'>
+				<div className='col-start-3 col-end-11'>
 					<Outlet />
-				</Container>
+				</div>
 			</div>
 		</Container>
 	);

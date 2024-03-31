@@ -5,11 +5,13 @@ const AuthContext = createContext();
 
 function AuthProvider({ children }) {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
+	const [userId, setUserId] = useState("");
 	useEffect(() => {
 		api.get("/auth/check")
 			.then((result) => {
 				if (result.status === 200) {
 					console.log("user already logged in");
+					setUserId(result.data.user.id);
 					setIsLoggedIn(true);
 				} else {
 					console.log(result);
@@ -21,7 +23,8 @@ function AuthProvider({ children }) {
 			});
 	}, []);
 	return (
-		<AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
+		<AuthContext.Provider
+			value={{ isLoggedIn, setIsLoggedIn, userId, setUserId }}>
 			{children}
 		</AuthContext.Provider>
 	);

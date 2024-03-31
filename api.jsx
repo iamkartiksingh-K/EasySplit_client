@@ -1,6 +1,6 @@
 import axios from "axios";
 
-axios.defaults.baseURL = "http://localhost:5000/api";
+axios.defaults.baseURL = "https://easysplit-server.onrender.com/api";
 
 const api = axios.create({
 	headers: {

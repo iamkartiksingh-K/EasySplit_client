@@ -17,8 +17,10 @@ function Login() {
 		username: "",
 		password: "",
 	});
-	const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
+	const [errorMsg, setErrorMsg] = useState("");
+	const { isLoggedIn, setIsLoggedIn, setUserId } = useContext(AuthContext);
 	const handleChange = (value, field) => {
+		setErrorMsg("");
 		const newDetails = { ...details, [field]: value };
 		setDetails(newDetails);
 	};
@@ -31,14 +33,16 @@ function Login() {
 						username: "",
 						password: "",
 					});
+					setUserId(result.data._id);
 					setIsLoggedIn(true);
 				}
 			})
 			.catch((err) => {
-				console.log(err.response);
+				console.log(err.response.data);
+				setErrorMsg(err.response.data.error);
 			});
 	};
-	if (isLoggedIn) return <Navigate to={"../app/Dashboard"} replace />;
+	if (isLoggedIn) return <Navigate to={"../app/Groups"} replace />;
 	return (
 		<Container className='h-full flex justify-center items-center'>
 			<Paper withBorder radius={"md"} shadow='md' className='w-96 p-8'>
@@ -78,10 +82,12 @@ function Login() {
 							required
 						/>
 					</Input.Wrapper>
+					<Text c={"red"}>{errorMsg}</Text>
 					<Button
 						size='md'
 						onClick={submit}
 						className='mt-6'
+						color='myColor'
 						fullWidth>
 						Login
 					</Button>

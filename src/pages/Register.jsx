@@ -13,7 +13,7 @@ import api from "../../api";
 import { AuthContext } from "../contexts/AuthContext";
 function Register() {
 	const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
-	if (isLoggedIn) return <Navigate to={"../app/Dashboard"} replace />;
+	const [errorMsg, setErrorMsg] = useState("");
 
 	const [details, setDetails] = useState({
 		fullName: "",
@@ -21,7 +21,10 @@ function Register() {
 		email: "",
 		password: "",
 	});
+	if (isLoggedIn) return <Navigate to={"/app"} />;
+
 	const handleChange = (value, field) => {
+		setErrorMsg("");
 		const newDetails = { ...details, [field]: value };
 		setDetails(newDetails);
 	};
@@ -34,11 +37,14 @@ function Register() {
 					email: "",
 					password: "",
 				});
+
 				setIsLoggedIn(true);
+
 				console.log(result);
 			})
 			.catch((err) => {
 				console.log(err.response);
+				setErrorMsg(err.response.data.error);
 			});
 	};
 	return (
@@ -112,9 +118,11 @@ function Register() {
 							required
 						/>
 					</Input.Wrapper>
+					<Text c={"red"}>{errorMsg}</Text>
 					<Button
 						size='md'
 						onClick={submit}
+						color='myColor'
 						className='mt-6'
 						fullWidth>
 						Register

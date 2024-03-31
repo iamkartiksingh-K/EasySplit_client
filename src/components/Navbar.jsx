@@ -1,17 +1,15 @@
 import { Paper, Box } from "@mantine/core";
 import {
-	IconUser,
 	IconUsersGroup,
 	IconLogout,
 	IconClipboardList,
-	IconHeartHandshake,
 } from "@tabler/icons-react";
 import { AuthContext } from "../contexts/AuthContext";
 import { useContext } from "react";
 import { Logo } from "../assets/CustomIcons";
 import api from "../../api";
 import NavElement from "./NavElement";
-function Navbar() {
+function Navbar({ className }) {
 	const { setIsLoggedIn } = useContext(AuthContext);
 	const logout = () => {
 		api.post("/auth/logout")
@@ -23,10 +21,10 @@ function Navbar() {
 			});
 	};
 	return (
-		<Paper shadow='md' className='h-full w-20 ' withBorder>
+		<Paper shadow='md' className={`h-full w-20 ${className}`} withBorder>
 			<div className='py-3 flex flex-col items-center justify-between h-full'>
 				<div className='h-1/2 w-full flex flex-col items-center'>
-					<NavElement to={"/app/Dashboard"} disableTooltip={true}>
+					<NavElement to={"#"} disableTooltip={true}>
 						<Logo className='cursor-pointer w-8' />
 					</NavElement>
 					<div className='mt-8 flex flex-col items-center justify-between'>
@@ -43,13 +41,6 @@ function Navbar() {
 							className={"my-3"}
 							hoverEffect>
 							<IconUsersGroup className=' cursor-pointer' />
-						</NavElement>
-						<NavElement
-							to={"/app/Friends"}
-							label={"Friends"}
-							className={"my-3"}
-							hoverEffect>
-							<IconHeartHandshake className=' cursor-pointer' />
 						</NavElement>
 					</div>
 				</div>

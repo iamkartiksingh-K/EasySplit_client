@@ -2,7 +2,8 @@ import "./index.css";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "@mantine/core/styles.css";
-import { MantineProvider } from "@mantine/core";
+import { MantineProvider, createTheme } from "@mantine/core";
+import { ModalsProvider } from "@mantine/modals";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext.jsx";
@@ -12,11 +13,10 @@ import App from "./App.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import Homepage from "./pages/Homepage.jsx";
-import Dashboard from "./pages/Dashboard.jsx";
 import Expenses from "./pages/Expenses.jsx";
 import Groups from "./pages/Groups.jsx";
-import Friends from "./pages/Friends.jsx";
 import GroupDetails from "./pages/GroupDetails.jsx";
+
 const router = createBrowserRouter([
 	{
 		path: "/",
@@ -26,10 +26,6 @@ const router = createBrowserRouter([
 		path: "/app",
 		element: <App />,
 		children: [
-			{
-				path: "Dashboard",
-				element: <Dashboard />,
-			},
 			{
 				path: "Expenses",
 				element: <Expenses />,
@@ -42,10 +38,6 @@ const router = createBrowserRouter([
 				path: "Groups/:groupId",
 				element: <GroupDetails />,
 			},
-			{
-				path: "Friends",
-				element: <Friends />,
-			},
 		],
 	},
 	{
@@ -57,11 +49,34 @@ const router = createBrowserRouter([
 		element: <Register />,
 	},
 ]);
+const myColor = [
+	"#e8fdef",
+	"#d7f7e2",
+	"#afebc4",
+	"#84e0a4",
+	"#62d788",
+	"#4ad177",
+	"#3dce6d",
+	"#2db65b",
+	"#22a14f",
+	"#0e8c41",
+];
+
+const theme = createTheme({
+	colors: {
+		myColor,
+	},
+	fontFamily: "Greycliff CF, sans-serif",
+	fontFamilyMonospace: "Monaco, Courier, monospace",
+	headings: { fontFamily: "Greycliff CF, sans-serif" },
+});
 ReactDOM.createRoot(document.getElementById("root")).render(
 	<AuthProvider>
 		<UserDataContextProvider>
-			<MantineProvider>
-				<RouterProvider router={router} />
+			<MantineProvider theme={theme}>
+				<ModalsProvider>
+					<RouterProvider router={router} />
+				</ModalsProvider>
 			</MantineProvider>
 		</UserDataContextProvider>
 	</AuthProvider>
