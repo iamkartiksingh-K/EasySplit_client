@@ -115,6 +115,7 @@ function GroupDetails() {
 		);
 	});
 	const submit = (title, amount, paidBy, date, split) => {
+		x;
 		const expense = {
 			description: title,
 			amount,
@@ -138,7 +139,7 @@ function GroupDetails() {
 		api.post(`groups/${groupId}/members`, {
 			username: newMemberName,
 		}).then((result) => {
-			// console.log(result);
+			console.log(result);
 			setNewMemberName("");
 			update();
 		});
@@ -273,8 +274,9 @@ function GroupDetails() {
 					</Button>
 				</Group>
 			</Group>
-			<Group grow justify='center' className='my-10' gap={"lg"}>
+			<div className='flex flex-col my-10 gap-2 md:flex-row' gap={"lg"}>
 				<StatusCard
+					className='grow'
 					title={"Total Balance"}
 					value={
 						balanceInfo &&
@@ -285,6 +287,7 @@ function GroupDetails() {
 					icon={<IconScale />}
 				/>
 				<StatusCard
+					className='grow'
 					title={"You Owe"}
 					value={balanceInfo && balanceInfo.youOwe}
 					color='red'
@@ -292,13 +295,14 @@ function GroupDetails() {
 					iconColor={"red"}
 				/>
 				<StatusCard
+					className='grow'
 					title={"You Are Owed"}
 					value={balanceInfo && balanceInfo.youAreOwed}
 					color='green'
 					icon={<IconArrowUpRight />}
 					iconColor='green'
 				/>
-			</Group>
+			</div>
 			<ExpenseModal
 				close={close}
 				opened={opened}
@@ -306,8 +310,8 @@ function GroupDetails() {
 				options={options}
 				members={members}
 			/>
-			<div className='flex gap-16 '>
-				<div className='grow'>
+			<div className='flex flex-col  gap-16 md:flex-row '>
+				<div className='grow order-2 md:order-1'>
 					<div>
 						<Group justify='space-between' align='end'>
 							<Title order={4}>Expense List</Title>
@@ -327,7 +331,7 @@ function GroupDetails() {
 					</div>
 					<Stack gap={"sm"}>{expenseList}</Stack>
 				</div>
-				<div className='w-1/4'>
+				<div className='order-1 md:w-1/4 md:order-2'>
 					<div>
 						<Group justify='space-between'>
 							<Title order={4}>Members</Title>
@@ -375,9 +379,7 @@ function GroupDetails() {
 						<Divider />
 						<Space h='sm' />
 					</div>
-					<Stack justify='flex-start' gap={"sm"}>
-						{membersList}
-					</Stack>
+					<div className='flex flex-col gap-3'>{membersList}</div>
 				</div>
 			</div>
 		</div>

@@ -18,7 +18,7 @@ function Groups() {
 	const [memberName, setMemberName] = useInputState("");
 	const [cover, setCover] = useInputState("");
 	const [value, update] = useForceUpdate();
-
+	const [addMemberStatus, setAddMemberStatus] = useState("");
 	if (!isLoggedIn) return <Navigate to={"../login"} />;
 	useEffect(() => {
 		api.get("groups")
@@ -86,7 +86,9 @@ function Groups() {
 			(balance) => balance.userId === userId
 		);
 		return (
-			<Grid.Col span={{ xs: 12, md: 6, lg: 3, xl: 3 }} key={group._id}>
+			<Grid.Col
+				span={{ xs: 12, sm: 6, md: 6, lg: 4, xl: 3 }}
+				key={group._id}>
 				<Link to={`${group._id}`}>
 					<GroupCard
 						coverImg={group.cover}
@@ -151,7 +153,7 @@ function Groups() {
 				</Button>
 			</Modal>
 			<Group justify='space-between' m={"md"}>
-				<Title order={1}>My Groups</Title>
+				<Title>My Groups</Title>
 				<Button
 					color={"myColor"}
 					onClick={open}

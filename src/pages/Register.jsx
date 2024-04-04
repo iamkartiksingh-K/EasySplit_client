@@ -12,7 +12,7 @@ import { useState, useContext } from "react";
 import api from "../../api";
 import { AuthContext } from "../contexts/AuthContext";
 function Register() {
-	const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
+	const { isLoggedIn, setIsLoggedIn, setUserId } = useContext(AuthContext);
 	const [errorMsg, setErrorMsg] = useState("");
 
 	const [details, setDetails] = useState({
@@ -37,9 +37,9 @@ function Register() {
 					email: "",
 					password: "",
 				});
-
+				console.log(result);
 				setIsLoggedIn(true);
-
+				setUserId(result.data._id);
 				console.log(result);
 			})
 			.catch((err) => {

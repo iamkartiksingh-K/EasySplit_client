@@ -21,13 +21,16 @@ function Navbar({ className }) {
 			});
 	};
 	return (
-		<Paper shadow='md' className={`h-full w-20 ${className}`} withBorder>
-			<div className='py-3 flex flex-col items-center justify-between h-full'>
-				<div className='h-1/2 w-full flex flex-col items-center'>
+		<Paper
+			shadow='md'
+			className={`w-full h-16 z-10  md:h-full md:w-20 ${className} `}
+			withBorder>
+			<div className='flex gap-3 h-full justify-between w-full items-center  md:py-3  md:flex-col md:items-center md:justify-between md:h-full'>
+				<div className='flex w-full  items-center md:h-1/2 md:w-full md:flex-col md:items-center'>
 					<NavElement to={"#"} disableTooltip={true}>
 						<Logo className='cursor-pointer w-8' />
 					</NavElement>
-					<div className='mt-8 flex flex-col items-center justify-between'>
+					<div className='flex flex-row gap-3 ml-3 justify-between items-center md:mt-8 md:flex-col md:items-center md:justify-center md:ml-0'>
 						<NavElement
 							to={"/app/Expenses"}
 							label={"Expenses"}

@@ -10,11 +10,9 @@ function App() {
 
 	return (
 		<Container fluid>
-			<div className='grid grid-cols-12 py-2'>
-				<div className='grid-span-1'>
-					<Navbar className='fixed left-2 bottom-1 top-1' />
-				</div>
-				<div className='col-start-3 col-end-11'>
+			<div className='grid grid-cols-12 py-2 pb-20 md:p-0'>
+				<Navbar className='fixed bottom-0 left-0 md:left-2 md:bottom-1 md:top-1' />
+				<div className='col-start-1 col-end-13 pt-3 md:col-start-3 md:col-end-12'>
 					<Outlet />
 				</div>
 			</div>

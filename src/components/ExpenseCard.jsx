@@ -39,7 +39,9 @@ function ExpenseCard({
 					<div>
 						<Popover position='right'>
 							<Popover.Target>
-								<Text size='lg' className='cursor-pointer'>
+								<Text
+									size='lg'
+									className='text-sm md:text-lg cursor-pointer'>
 									{title}
 								</Text>
 							</Popover.Target>
@@ -56,7 +58,7 @@ function ExpenseCard({
 							</Popover.Dropdown>
 						</Popover>
 						<Group>
-							<Text>{date}</Text>
+							<Text className='text-sm md:text-lg'>{date}</Text>
 							{showBadge && (
 								<Badge variant='light'>{group}</Badge>
 							)}
@@ -64,7 +66,7 @@ function ExpenseCard({
 					</div>
 				</Group>
 
-				<Group justify='flex-end' className='w-5/12'>
+				<div className='flex justify-between w-full md:w-5/12'>
 					<Stack justify='flex-start' gap={0} className='w-1/2'>
 						<Text size='sm' c='dimmed' className='text-right'>
 							Paid by {payer}
@@ -88,7 +90,7 @@ function ExpenseCard({
 								: yourSplit?.amount || 0}
 						</Text>
 					</Stack>
-				</Group>
+				</div>
 			</Group>
 		</Card>
 	);

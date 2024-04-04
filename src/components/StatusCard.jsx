@@ -1,7 +1,12 @@
 import { ThemeIcon, Title, Text, Group, Paper } from "@mantine/core";
-function StatusCard({ title, value, color, icon, iconColor }) {
+function StatusCard({ title, value, color, icon, iconColor, className }) {
 	return (
-		<Paper withBorder radius={"md"} p={"md"} shadow='sm'>
+		<Paper
+			withBorder
+			radius={"md"}
+			p={"md"}
+			shadow='sm'
+			className={className}>
 			<Group>
 				<ThemeIcon
 					className='mr-5'
