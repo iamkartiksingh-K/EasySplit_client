@@ -27,7 +27,7 @@ function Navbar({ className }) {
 			withBorder>
 			<div className='flex gap-3 h-full justify-between w-full items-center  md:py-3  md:flex-col md:items-center md:justify-between md:h-full'>
 				<div className='flex w-full  items-center md:h-1/2 md:w-full md:flex-col md:items-center'>
-					<NavElement to={"#"} disableTooltip={true}>
+					<NavElement to={"/app/Groups"} disableTooltip={true}>
 						<Logo className='cursor-pointer w-8' />
 					</NavElement>
 					<div className='flex flex-row gap-3 ml-3 justify-between items-center md:mt-8 md:flex-col md:items-center md:justify-center md:ml-0'>

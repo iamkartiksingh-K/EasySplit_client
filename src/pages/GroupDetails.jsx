@@ -11,7 +11,6 @@ import {
 	TextInput,
 	Tooltip,
 	BackgroundImage,
-	ScrollArea,
 	Table,
 } from "@mantine/core";
 import { modals } from "@mantine/modals";
@@ -115,7 +114,6 @@ function GroupDetails() {
 		);
 	});
 	const submit = (title, amount, paidBy, date, split) => {
-		x;
 		const expense = {
 			description: title,
 			amount,
