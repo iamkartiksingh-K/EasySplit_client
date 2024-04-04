@@ -17,7 +17,7 @@ function NavElement({
 		"size-14 flex items-center justify-center rounded-md",
 		className,
 		{ "hover:bg-green-100": hoverEffect },
-		{ "bg-green-100": location === to && isLogo }
+		{ "bg-green-100": location === to && !isLogo }
 	);
 	return (
 		<Tooltip
