@@ -27,7 +27,10 @@ function Navbar({ className }) {
 			withBorder>
 			<div className='flex gap-3 h-full justify-between w-full items-center  md:py-3  md:flex-col md:items-center md:justify-between md:h-full'>
 				<div className='flex w-full  items-center md:h-1/2 md:w-full md:flex-col md:items-center'>
-					<NavElement to={"/app/Groups"} disableTooltip={true}>
+					<NavElement
+						to={"/app/Groups"}
+						disableTooltip={true}
+						isLogo={true}>
 						<Logo className='cursor-pointer w-8' />
 					</NavElement>
 					<div className='flex flex-row gap-3 ml-3 justify-between items-center md:mt-8 md:flex-col md:items-center md:justify-center md:ml-0'>
@@ -35,6 +38,7 @@ function Navbar({ className }) {
 							to={"/app/Expenses"}
 							label={"Expenses"}
 							className={"my-3"}
+							isLogo={false}
 							hoverEffect>
 							<IconClipboardList className='cursor-pointer' />
 						</NavElement>
@@ -42,6 +46,7 @@ function Navbar({ className }) {
 							to={"/app/Groups"}
 							label={"Groups"}
 							className={"my-3"}
+							isLogo={false}
 							hoverEffect>
 							<IconUsersGroup className=' cursor-pointer' />
 						</NavElement>
