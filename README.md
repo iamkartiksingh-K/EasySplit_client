@@ -24,3 +24,5 @@ npm run dev
 #### Individual Group Page
 ![image](https://github.com/iamkartiksingh-K/EasySplit_client/assets/62024947/4797034d-8d62-43e5-ab1a-323aa00a9f2f)
 
+#### Mobile View
+![image](https://github.com/iamkartiksingh-K/EasySplit_client/assets/62024947/168bd16b-dcdd-4c89-a03d-e7c71d18a75c)
