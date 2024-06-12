@@ -2,9 +2,10 @@ import "./index.css";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "@mantine/core/styles.css";
+import "@mantine/notifications/styles.css";
 import { MantineProvider, createTheme } from "@mantine/core";
 import { ModalsProvider } from "@mantine/modals";
-
+import { Notifications } from "@mantine/notifications";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext.jsx";
 import { UserDataContextProvider } from "./contexts/userDataContext.jsx";
@@ -74,6 +75,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
 	<AuthProvider>
 		<UserDataContextProvider>
 			<MantineProvider theme={theme}>
+				<Notifications />
 				<ModalsProvider>
 					<RouterProvider router={router} />
 				</ModalsProvider>

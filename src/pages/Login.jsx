@@ -24,23 +24,33 @@ function Login() {
 		const newDetails = { ...details, [field]: value };
 		setDetails(newDetails);
 	};
-	const submit = () => {
-		api.post("/auth/login", JSON.stringify(details))
-			.then((result) => {
-				if (result.status == 200) {
-					console.log("logged in");
-					setDetails({
-						username: "",
-						password: "",
-					});
-					setUserId(result.data._id);
-					setIsLoggedIn(true);
-				}
-			})
-			.catch((err) => {
-				console.log(err.response.data);
-				setErrorMsg(err.response.data.error);
-			});
+	const submit = async () => {
+		try {
+			const response = await api.post(
+				"/auth/login",
+				JSON.stringify(details)
+			);
+			console.log(response);
+			setUserId(response.data._id);
+			setIsLoggedIn(true);
+		} catch (error) {
+			console.log(error);
+			setErrorMsg(error?.response?.data.message);
+		}
+	};
+	const guestLogin = async () => {
+		try {
+			const response = await api.post(
+				"/auth/login",
+				JSON.stringify({ username: "Guest", password: "1234" })
+			);
+			console.log(response);
+			setUserId(response.data._id);
+			setIsLoggedIn(true);
+		} catch (error) {
+			console.log(error);
+			setErrorMsg(error?.response?.data.message);
+		}
 	};
 	if (isLoggedIn) return <Navigate to={"../app/Groups"} replace />;
 	return (
@@ -91,11 +101,19 @@ function Login() {
 						fullWidth>
 						Login
 					</Button>
+					<Button
+						variant='outline'
+						size='md'
+						onClick={guestLogin}
+						className='mt-3'
+						fullWidth>
+						Guest Login
+					</Button>
 					<Box mt={"xs"} ta={"center"}>
 						<Link
 							to='../register'
 							className='text-blue-600 hover:underline'>
-							Don't have an account?
+							{"Don't have an account?"}
 						</Link>
 					</Box>
 				</form>

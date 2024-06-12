@@ -8,7 +8,7 @@ import userDataContext from "../contexts/userDataContext";
 import { AuthContext } from "../contexts/AuthContext";
 import { useForceUpdate } from "../hooks/useForceUpdate";
 import { IconPlus } from "@tabler/icons-react";
-
+import { notifications } from "@mantine/notifications";
 function Groups() {
 	const { groups, setGroups } = useContext(userDataContext);
 	const { isLoggedIn, userId } = useContext(AuthContext);
@@ -24,61 +24,74 @@ function Groups() {
 		api.get("groups")
 			.then((result) => {
 				console.log(result.data);
-				setGroups(result.data);
+				setGroups(result.data.data);
 			})
-			.catch((err) => {
-				console.log(err);
+			.catch((error) => {
+				console.log(error);
 			});
 	}, [value]);
 
 	const addGroup = async () => {
 		console.log(groupMembers);
-		await api
-			.post("/groups", {
+		try {
+			const response = await api.post("/groups", {
 				name: groupName,
 				members: groupMembers,
 				cover:
 					cover ||
 					"https://images.unsplash.com/photo-1514810771018-276192729582?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-			})
-			.then((result) => {
-				console.log(result);
-				close();
-				setGroupMembers([]);
-				setGroupName("");
-				update();
-			})
-			.catch((err) => {
-				console.log(err);
 			});
+			console.log(response);
+			setGroups([...groups, response.data.data]);
+			close();
+			setGroupMembers([]);
+			setGroupName("");
+		} catch (error) {
+			notifications.show({
+				title: error.response.data.message,
+				color: "red",
+			});
+		}
 	};
 	const addMember = async () => {
 		api.get(`/users/search/${memberName}`)
-			.then((memberDetails) => {
-				console.log(memberDetails);
+			.then(({ data }) => {
+				console.log(data.data._id);
 				console.log(memberName);
 				if (
-					memberDetails.data &&
-					memberDetails.data._id !== userId &&
-					!groupMembers.includes({
-						userId: memberDetails.data._id,
-						username: memberDetails.data.username,
-					})
+					groupMembers.find(({ userId }) => {
+						console.log(userId);
+						return userId === data.data._id;
+					}) !== undefined
 				) {
+					notifications.show({
+						title: "User already in the group",
+					});
+				} else if (data.data._id === userId) {
+					notifications.show({
+						title: "You are already in the group",
+					});
+				} else {
 					setGroupMembers([
 						...groupMembers,
 						{
-							userId: memberDetails.data._id,
-							username: memberDetails.data.username,
+							userId: data.data._id,
+							username: data.data.username,
 						},
 					]);
-					console.log("member added");
+					notifications.show({
+						title: "Member added!",
+						color: "green",
+					});
 					setMemberName("");
-					update();
 				}
 			})
-			.catch((err) => {
-				console.log(err);
+			.catch((error) => {
+				console.log(error);
+				notifications.show({
+					title: error.response.data.message,
+					color: "red",
+				});
 			});
 	};
 	const renderedGroups = groups.map((group) => {

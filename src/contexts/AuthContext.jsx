@@ -15,7 +15,6 @@ function AuthProvider({ children }) {
 					setIsLoggedIn(true);
 				} else {
 					console.log(result);
-					console.log("here");
 				}
 			})
 			.catch((err) => {

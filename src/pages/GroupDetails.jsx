@@ -35,6 +35,7 @@ import { useForceUpdate } from "../hooks/useForceUpdate";
 import StatusCard from "../components/StatusCard";
 import Edit from "../components/Edit";
 import SettleExpenses from "../components/SettleExpenses";
+import { notifications } from "@mantine/notifications";
 
 function GroupDetails() {
 	const { userId } = useContext(AuthContext);
@@ -56,63 +57,32 @@ function GroupDetails() {
 	useEffect(() => {
 		api.get(`groups/${groupId}`)
 			.then((groupInfo) => {
-				setGroupData(groupInfo.data);
-				// console.log(groupData);
+				setGroupData(groupInfo.data.data);
 				const result = api.post(`groups/${groupId}/memberInfo`, {
-					memberInfo: groupInfo.data.members,
+					memberInfo: groupInfo.data.data.members,
 				});
 				return result;
 			})
 			.then((result) => {
-				setMemebers(result.data);
-				// console.log(result.data);
-				const selectOptions = result.data.map((member) => {
+				setMemebers(result.data.data);
+				const selectOptions = result.data.data.map((member) => {
 					return member.fullName;
 				});
-				// console.log(selectOptions);
 				setOptions(selectOptions);
 				api.get(`expenses/${groupId}/getAllExpenses`).then(
 					(allExpenses) => {
-						// console.log(allExpenses);
-						setExpenses(allExpenses.data);
+						setExpenses(allExpenses.data.data);
 					}
 				);
 			})
-			.catch((err) => {
-				console.log(err);
+			.catch((error) => {
+				console.log(error);
+				notifications.show({
+					title: error.response.data.message,
+					color: "red",
+				});
 			});
 	}, [value]);
-
-	const userMap = Object.fromEntries(
-		members.map((member, index) => {
-			return [member._id, options[index]];
-		})
-	);
-	const membersList = groupData.members?.map((member) => {
-		return <Member key={member.userId} name={member.username} />;
-	});
-	const expenseList = expenses.map((expense) => {
-		const date = new Date(expense.date).toLocaleDateString("en-gb", {
-			year: "numeric",
-			month: "long",
-			day: "numeric",
-		});
-		// console.log(userId);
-		const yourSplit = expense.split.find((user) => userId === user.userId);
-		return (
-			<ExpenseCard
-				key={expense._id}
-				title={expense.description}
-				amount={expense.amount}
-				payer={expense.paidBy.username}
-				date={date}
-				group={groupData.name}
-				yourSplit={yourSplit}
-				allSplits={expense.split}
-				paidByUser={expense.paidBy.userId === userId}
-			/>
-		);
-	});
 	const submit = (title, amount, paidBy, date, split) => {
 		const expense = {
 			description: title,
@@ -127,39 +97,60 @@ function GroupDetails() {
 			data: expense,
 		})
 			.then((result) => {
-				update();
+				setExpenses([...expenses, result.data.data]);
 			})
-			.catch((err) => {
-				console.log(err);
+			.catch((error) => {
+				console.log(error);
 			});
 	};
-	const addMember = () => {
-		api.post(`groups/${groupId}/members`, {
-			username: newMemberName,
-		}).then((result) => {
+	const addMember = async () => {
+		try {
+			const result = await api.post(`groups/${groupId}/members`, {
+				username: newMemberName,
+			});
 			console.log(result);
-			setNewMemberName("");
-			update();
-		});
-	};
-	const updateGroup = () => {
-		const body = {};
-		if (newImage) {
-			body.cover = newImage;
-			setNewImage("");
-		}
-		if (newName) {
-			body.groupName = newName;
-			setNewName("");
-		}
-		api.put(`groups/${groupId}`, body)
-			.then((result) => {
-				console.log(result);
-				update();
-			})
-			.catch((err) => {
-				console.log(err);
+			setGroupData(result.data.data);
+			notifications.show({
+				title: result.data.message,
 			});
+			setNewMemberName("");
+		} catch (error) {
+			console.log(error);
+			notifications.show({
+				title: error.response.data.message,
+				color: "red",
+			});
+		}
+	};
+	const removeMember = async (userToRemove) => {
+		try {
+			const result = await api.post(`groups/${groupId}/removeMember`, {
+				userToRemove,
+			});
+			console.log(result);
+			setGroupData(result.data.data);
+			notifications.show({
+				title: result.data.message,
+			});
+		} catch (error) {
+			console.log(error);
+			notifications.show({
+				title: error.response.data.message,
+				color: "red",
+			});
+		}
+	};
+	const updateGroup = async () => {
+		const body = { cover: newImage, groupName: newName };
+		try {
+			const result = await api.put(`groups/${groupId}`, body);
+			console.log(result);
+			setGroupData(result.data.data);
+			setNewName("");
+			setNewName("");
+		} catch (error) {
+			console.log(error);
+		}
 	};
 	const deleteGroup = () =>
 		modals.openConfirmModal({
@@ -171,11 +162,16 @@ function GroupDetails() {
 				api.delete(`groups/${groupId}`)
 					.then((result) => {
 						console.log(result);
-						update();
+						setGroupData({});
+						navigate(-1);
 					})
-					.catch((err) => console.log(err));
-
-				navigate(-1);
+					.catch((error) => {
+						console.log(error);
+						notifications.show({
+							title: error.response.data.message,
+							color: "red",
+						});
+					});
 			},
 		});
 	const getTransactions = () => {
@@ -191,13 +187,52 @@ function GroupDetails() {
 	};
 	const settleExpense = (from, to, amount) => {
 		console.log(from, to, amount);
+
 		api.post(`/groups/${groupId}/settle`, { from, to, amount })
 			.then((result) => {
 				console.log(result);
-				update();
+				setGroupData(result.data.data);
 			})
-			.catch((err) => console.log(err));
+			.catch((error) => console.log(error));
 	};
+	const userMap = Object.fromEntries(
+		members.map((member, index) => {
+			return [member._id, options[index]];
+		})
+	);
+	const membersList = groupData.members?.map((member) => {
+		return (
+			<Member
+				key={member.userId}
+				userId={member.userId}
+				isAdmin={groupData.admin === userId}
+				name={member.username}
+				removeMember={removeMember}
+			/>
+		);
+	});
+	const expenseList = expenses.map((expense) => {
+		const date = new Date(expense.date).toLocaleDateString("en-gb", {
+			year: "numeric",
+			month: "long",
+			day: "numeric",
+		});
+		const yourSplit = expense.split.find((user) => userId === user.userId);
+		return (
+			<ExpenseCard
+				key={expense._id}
+				title={expense.description}
+				amount={expense.amount}
+				payer={expense.paidBy.username}
+				date={date}
+				group={groupData.name}
+				yourSplit={yourSplit}
+				allSplits={expense.split}
+				paidByUser={expense.paidBy.userId === userId}
+			/>
+		);
+	});
+
 	const transactionList = transactions.map((transaction) => {
 		return (
 			<Table.Tr

@@ -1,10 +1,19 @@
 import { Card, Avatar, Text, Group } from "@mantine/core";
-function Member({ name }) {
+import { IconUserX } from "@tabler/icons-react";
+function Member({ name, removeMember, userId, isAdmin }) {
 	return (
 		<Card withBorder>
-			<Group>
-				<Avatar />
-				<Text fw={500}>{name}</Text>
+			<Group justify='space-between'>
+				<Group>
+					<Avatar />
+					<Text fw={500}>{name}</Text>
+				</Group>
+				{isAdmin && (
+					<IconUserX
+						color='red'
+						onClick={() => removeMember(userId)}
+					/>
+				)}
 			</Group>
 		</Card>
 	);

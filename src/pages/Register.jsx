@@ -28,24 +28,19 @@ function Register() {
 		const newDetails = { ...details, [field]: value };
 		setDetails(newDetails);
 	};
-	const submit = () => {
-		api.post("/auth/register", JSON.stringify(details))
-			.then((result) => {
-				setDetails({
-					fullName: "",
-					username: "",
-					email: "",
-					password: "",
-				});
-				console.log(result);
-				setIsLoggedIn(true);
-				setUserId(result.data._id);
-				console.log(result);
-			})
-			.catch((err) => {
-				console.log(err.response);
-				setErrorMsg(err.response.data.error);
-			});
+	const submit = async () => {
+		try {
+			const response = await api.post(
+				"/auth/register",
+				JSON.stringify(details)
+			);
+			console.log(response);
+			setIsLoggedIn(true);
+			setUserId(response.data._id);
+		} catch (error) {
+			console.log(error);
+			setErrorMsg(error.response.data.message);
+		}
 	};
 	return (
 		<Container className='h-full flex justify-center items-center'>
