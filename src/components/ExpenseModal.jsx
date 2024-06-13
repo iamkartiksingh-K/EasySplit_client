@@ -12,21 +12,17 @@ import {
 import "@mantine/dates/styles.css";
 import { DateInput } from "@mantine/dates";
 import { useInputState } from "@mantine/hooks";
-function ExpenseModal({ options, close, opened, onSubmit, members }) {
+function ExpenseModal({ close, opened, onSubmit, members }) {
 	const [title, setTitle] = useInputState("");
 	const [amount, setAmount] = useInputState(0);
 	const [date, setDate] = useState(new Date());
 	const [paidBy, setPaidBy] = useInputState("");
 	const [splits, setSplits] = useState([]);
-	const userMap = Object.fromEntries(
-		options.map((option, index) => {
-			return [option, members[index]._id];
-		})
-	);
+
 	useEffect(() => {
-		const tempSplits = members.map((member, index) => {
+		const tempSplits = members?.map((member) => {
 			return {
-				userId: member._id,
+				userId: member.userId,
 				username: member.username,
 				amount: 0,
 			};
@@ -34,7 +30,7 @@ function ExpenseModal({ options, close, opened, onSubmit, members }) {
 		setSplits(tempSplits);
 	}, [members]);
 	const parse = (splits) => {
-		const parsedSplits = splits.map((split) => {
+		const parsedSplits = splits?.map((split) => {
 			return {
 				...split,
 				amount: parseInt(split?.amount),
@@ -49,26 +45,27 @@ function ExpenseModal({ options, close, opened, onSubmit, members }) {
 		}, 0);
 		return parsedAmount === total;
 	};
-	const inputSplits = splits.map((split, index) => {
+
+	const inputSplits = splits?.map((split, index) => {
 		return (
 			<Input.Wrapper
 				size='md'
 				key={split.userId}
-				label={options[index]}
+				label={split.username}
 				className='mb-3'>
 				<Input
-					index={index}
+					userId={split.userId}
 					type='number'
-					value={splits[index]?.amount}
+					value={split?.amount}
 					onChange={(event) => {
-						const newValues = splits.map((split, idx) => {
-							if (index === idx) {
+						const newValues = splits?.map((currSplit, idx) => {
+							if (split.userId === currSplit.userId) {
 								return {
-									...split,
+									...currSplit,
 									amount: event.target.value,
 								};
 							}
-							return split;
+							return currSplit;
 						});
 						setSplits(newValues);
 					}}
@@ -110,7 +107,7 @@ function ExpenseModal({ options, close, opened, onSubmit, members }) {
 						label='Payed By'
 						value={paidBy}
 						onChange={setPaidBy}
-						data={options}
+						data={members?.map((member) => member.username)}
 						size='md'
 					/>
 					<Space h={"md"} />
@@ -129,8 +126,11 @@ function ExpenseModal({ options, close, opened, onSubmit, members }) {
 						onClick={() => {
 							const split = parse(splits);
 							if (validateExpense(amount, split)) {
+								const paidByObj = splits.find(
+									(split) => split.username === paidBy
+								);
 								const paidByProper = {
-									userId: userMap[paidBy],
+									userId: paidByObj.userId,
 									username: paidBy,
 								};
 								onSubmit(

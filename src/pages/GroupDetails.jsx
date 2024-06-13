@@ -31,7 +31,6 @@ import ExpenseCard from "../components/ExpenseCard";
 import Member from "../components/Member";
 import ExpenseModal from "../components/ExpenseModal";
 import { AuthContext } from "../contexts/AuthContext";
-import { useForceUpdate } from "../hooks/useForceUpdate";
 import StatusCard from "../components/StatusCard";
 import Edit from "../components/Edit";
 import SettleExpenses from "../components/SettleExpenses";
@@ -41,13 +40,10 @@ function GroupDetails() {
 	const { userId } = useContext(AuthContext);
 	const { groupId } = useParams();
 	const [groupData, setGroupData] = useState({});
-	const [members, setMemebers] = useState([]);
-	const [options, setOptions] = useState([]);
 	const [opened, { open, close }] = useDisclosure(false);
 	const [isOpen, { open: openModal, close: closeModal }] =
 		useDisclosure(false);
 	const [expenses, setExpenses] = useState([]);
-	const [value, update] = useForceUpdate();
 	const [newMemberName, setNewMemberName] = useInputState("");
 	const [newImage, setNewImage] = useInputState("");
 	const [newName, setNewName] = useInputState("");
@@ -55,35 +51,26 @@ function GroupDetails() {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		api.get(`groups/${groupId}`)
-			.then((groupInfo) => {
-				setGroupData(groupInfo.data.data);
-				const result = api.post(`groups/${groupId}/memberInfo`, {
-					memberInfo: groupInfo.data.data.members,
-				});
-				return result;
-			})
-			.then((result) => {
-				setMemebers(result.data.data);
-				const selectOptions = result.data.data.map((member) => {
-					return member.fullName;
-				});
-				setOptions(selectOptions);
-				api.get(`expenses/${groupId}/getAllExpenses`).then(
-					(allExpenses) => {
-						setExpenses(allExpenses.data.data);
-					}
+		async function init() {
+			try {
+				const response = await api.get(`groups/${groupId}`);
+				const groupInfo = response.data.data;
+				setGroupData(groupInfo);
+				const allExpenses = await api.get(
+					`expenses/${groupId}/getAllExpenses`
 				);
-			})
-			.catch((error) => {
+				setExpenses(allExpenses.data.data);
+			} catch (error) {
 				console.log(error);
 				notifications.show({
 					title: error.response.data.message,
 					color: "red",
 				});
-			});
-	}, [value]);
-	const submit = (title, amount, paidBy, date, split) => {
+			}
+		}
+		init();
+	}, []);
+	const submit = async (title, amount, paidBy, date, split) => {
 		const expense = {
 			description: title,
 			amount,
@@ -93,15 +80,18 @@ function GroupDetails() {
 			split,
 		};
 		// console.log(expense);
-		api.post("/expenses", {
-			data: expense,
-		})
-			.then((result) => {
-				setExpenses([...expenses, result.data.data]);
-			})
-			.catch((error) => {
-				console.log(error);
+		try {
+			const result = await api.post("/expenses", {
+				data: expense,
 			});
+
+			setExpenses([...expenses, result.data.data]);
+			const response = await api.get(`groups/${groupId}`);
+			const groupInfo = response.data.data;
+			setGroupData(groupInfo);
+		} catch (error) {
+			console.log(error);
+		}
 	};
 	const addMember = async () => {
 		try {
@@ -140,14 +130,34 @@ function GroupDetails() {
 			});
 		}
 	};
+	const leaveGroup = async () => {
+		try {
+			const result = await api.post(`groups/${groupId}/leave`);
+			setGroupData(result.data.data);
+			navigate(-1);
+			notifications.show({
+				title: result.data.message,
+			});
+		} catch (error) {
+			console.log(error);
+			notifications.show({
+				title: error.response.data.message,
+				color: "red",
+			});
+		}
+	};
 	const updateGroup = async () => {
 		const body = { cover: newImage, groupName: newName };
 		try {
 			const result = await api.put(`groups/${groupId}`, body);
-			console.log(result);
+			// console.log(result.data.data);
 			setGroupData(result.data.data);
+			console.log(result.data.data);
 			setNewName("");
-			setNewName("");
+			setNewImage("");
+			notifications.show({
+				title: result.data.message,
+			});
 		} catch (error) {
 			console.log(error);
 		}
@@ -192,21 +202,27 @@ function GroupDetails() {
 			.then((result) => {
 				console.log(result);
 				setGroupData(result.data.data);
+				notifications.show({
+					title: result.data.message,
+				});
 			})
-			.catch((error) => console.log(error));
+			.catch((error) =>
+				notifications.show({
+					title: error.response?.data.message,
+					color: "red",
+				})
+			);
 	};
-	const userMap = Object.fromEntries(
-		members.map((member, index) => {
-			return [member._id, options[index]];
-		})
-	);
+
 	const membersList = groupData.members?.map((member) => {
 		return (
 			<Member
 				key={member.userId}
 				userId={member.userId}
-				isAdmin={groupData.admin === userId}
+				me={userId}
+				admin={groupData.admin}
 				name={member.username}
+				leaveGroup={leaveGroup}
 				removeMember={removeMember}
 			/>
 		);
@@ -237,8 +253,8 @@ function GroupDetails() {
 		return (
 			<Table.Tr
 				key={`${transaction.from}${transaction.to}${transaction.amount}`}>
-				<Table.Td>{userMap[transaction.from]}</Table.Td>
-				<Table.Td>{userMap[transaction.to]}</Table.Td>
+				<Table.Td>{transaction.from}</Table.Td>
+				<Table.Td>{transaction.to}</Table.Td>
 				<Table.Td>{transaction.amount}</Table.Td>
 				<Table.Td>
 					<Button
@@ -340,8 +356,7 @@ function GroupDetails() {
 				close={close}
 				opened={opened}
 				onSubmit={submit}
-				options={options}
-				members={members}
+				members={groupData.members}
 			/>
 			<div className='flex flex-col  gap-16 md:flex-row '>
 				<div className='grow order-2 md:order-1'>
