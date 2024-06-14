@@ -6,24 +6,31 @@ const AuthContext = createContext();
 function AuthProvider({ children }) {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
 	const [userId, setUserId] = useState("");
+	const [username, setUsername] = useState("");
 	useEffect(() => {
-		api.get("/auth/check")
-			.then((result) => {
-				if (result.status === 200) {
-					console.log("user already logged in");
-					setUserId(result.data.user.id);
-					setIsLoggedIn(true);
-				} else {
-					console.log(result);
-				}
-			})
-			.catch((err) => {
-				console.log(err);
-			});
+		async function init() {
+			try {
+				const result = await api.get("/auth/check");
+				console.log("user already logged in");
+				setUserId(result.data.user.id);
+				setUsername(result.data.user.username);
+				setIsLoggedIn(true);
+			} catch (error) {
+				console.log(error.response?.data?.message);
+			}
+		}
+		init();
 	}, []);
 	return (
 		<AuthContext.Provider
-			value={{ isLoggedIn, setIsLoggedIn, userId, setUserId }}>
+			value={{
+				isLoggedIn,
+				setIsLoggedIn,
+				userId,
+				setUserId,
+				username,
+				setUsername,
+			}}>
 			{children}
 		</AuthContext.Provider>
 	);

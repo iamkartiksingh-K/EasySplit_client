@@ -18,7 +18,8 @@ function Login() {
 		password: "",
 	});
 	const [errorMsg, setErrorMsg] = useState("");
-	const { isLoggedIn, setIsLoggedIn, setUserId } = useContext(AuthContext);
+	const { isLoggedIn, setIsLoggedIn, setUserId, setUsername } =
+		useContext(AuthContext);
 	const handleChange = (value, field) => {
 		setErrorMsg("");
 		const newDetails = { ...details, [field]: value };
@@ -31,7 +32,8 @@ function Login() {
 				JSON.stringify(details)
 			);
 			console.log(response);
-			setUserId(response.data._id);
+			setUserId(response.data.id);
+			setUsername(response.data.username);
 			setIsLoggedIn(true);
 		} catch (error) {
 			console.log(error);

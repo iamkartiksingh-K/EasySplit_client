@@ -1,4 +1,4 @@
-import { Paper, Box } from "@mantine/core";
+import { Paper, Avatar } from "@mantine/core";
 import {
 	IconUsersGroup,
 	IconLogout,
@@ -6,11 +6,10 @@ import {
 } from "@tabler/icons-react";
 import { AuthContext } from "../contexts/AuthContext";
 import { useContext } from "react";
-import { Logo } from "../assets/CustomIcons";
 import api from "../../api";
 import NavElement from "./NavElement";
 function Navbar({ className }) {
-	const { setIsLoggedIn } = useContext(AuthContext);
+	const { setIsLoggedIn, username } = useContext(AuthContext);
 	const logout = () => {
 		api.post("/auth/logout")
 			.then((result) => {
@@ -29,9 +28,9 @@ function Navbar({ className }) {
 				<div className='flex w-full  items-center md:h-1/2 md:w-full md:flex-col md:items-center'>
 					<NavElement
 						to={"/app/Groups"}
-						disableTooltip={true}
+						label={username}
 						isLogo={true}>
-						<Logo className='cursor-pointer w-8' />
+						<Avatar radius='xl' color='green' />
 					</NavElement>
 					<div className='flex flex-row gap-3 ml-3 justify-between items-center md:mt-8 md:flex-col md:items-center md:justify-center md:ml-0'>
 						<NavElement

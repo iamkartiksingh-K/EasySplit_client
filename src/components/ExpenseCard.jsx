@@ -37,7 +37,7 @@ function ExpenseCard({
 						<IconLicense />
 					</Avatar>
 					<div>
-						<Popover position='right'>
+						<Popover position='bottom' shadow='md'>
 							<Popover.Target>
 								<Text
 									size='lg'
@@ -45,7 +45,7 @@ function ExpenseCard({
 									{title}
 								</Text>
 							</Popover.Target>
-							<Popover.Dropdown className='drop-shadow-xl border-8'>
+							<Popover.Dropdown className=''>
 								<Table>
 									<Table.Thead>
 										<Table.Tr>

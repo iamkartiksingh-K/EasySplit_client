@@ -12,7 +12,8 @@ import { useState, useContext } from "react";
 import api from "../../api";
 import { AuthContext } from "../contexts/AuthContext";
 function Register() {
-	const { isLoggedIn, setIsLoggedIn, setUserId } = useContext(AuthContext);
+	const { isLoggedIn, setIsLoggedIn, setUserId, setUsername } =
+		useContext(AuthContext);
 	const [errorMsg, setErrorMsg] = useState("");
 
 	const [details, setDetails] = useState({
@@ -36,6 +37,7 @@ function Register() {
 			);
 			console.log(response);
 			setIsLoggedIn(true);
+			setUsername(response.data.username);
 			setUserId(response.data._id);
 		} catch (error) {
 			console.log(error);
