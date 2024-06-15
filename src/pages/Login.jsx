@@ -47,7 +47,8 @@ function Login() {
 				JSON.stringify({ username: "Guest", password: "1234" })
 			);
 			console.log(response);
-			setUserId(response.data._id);
+			setUserId(response.data.id);
+			setUsername(response.data.username);
 			setIsLoggedIn(true);
 		} catch (error) {
 			console.log(error);
