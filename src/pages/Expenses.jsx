@@ -2,7 +2,7 @@ import ExpenseCard from "../components/ExpenseCard";
 import api from "../../api";
 import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../contexts/AuthContext";
-import { Stack, Title, ScrollArea } from "@mantine/core";
+import { Stack, Title } from "@mantine/core";
 function Expenses() {
 	const [expenses, setExpenses] = useState([]);
 	const { userId } = useContext(AuthContext);
@@ -10,7 +10,7 @@ function Expenses() {
 		api.get("expenses/")
 			.then((result) => {
 				console.log(result.data);
-				setExpenses(result.data);
+				setExpenses(result.data.data);
 			})
 			.catch((err) => {
 				console.log(err);

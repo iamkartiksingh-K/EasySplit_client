@@ -8,7 +8,6 @@ import { ModalsProvider } from "@mantine/modals";
 import { Notifications } from "@mantine/notifications";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext.jsx";
-import { UserDataContextProvider } from "./contexts/userDataContext.jsx";
 
 import App from "./App.jsx";
 import Login from "./pages/Login.jsx";
@@ -73,13 +72,11 @@ const theme = createTheme({
 });
 ReactDOM.createRoot(document.getElementById("root")).render(
 	<AuthProvider>
-		<UserDataContextProvider>
-			<MantineProvider theme={theme}>
-				<Notifications />
-				<ModalsProvider>
-					<RouterProvider router={router} />
-				</ModalsProvider>
-			</MantineProvider>
-		</UserDataContextProvider>
+		<MantineProvider theme={theme}>
+			<Notifications />
+			<ModalsProvider>
+				<RouterProvider router={router} />
+			</ModalsProvider>
+		</MantineProvider>
 	</AuthProvider>
 );
