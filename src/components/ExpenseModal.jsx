@@ -12,6 +12,7 @@ import {
 import "@mantine/dates/styles.css";
 import { DateInput } from "@mantine/dates";
 import { useInputState } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
 function ExpenseModal({ close, opened, onSubmit, members }) {
 	const [title, setTitle] = useInputState("");
 	const [amount, setAmount] = useInputState(0);
@@ -43,9 +44,36 @@ function ExpenseModal({ close, opened, onSubmit, members }) {
 		const total = splits.reduce((sum, split) => {
 			return sum + split?.amount;
 		}, 0);
+		if (parsedAmount !== total)
+			notifications.show({
+				title: "The sum of splits is not equal the amount paid",
+				color: "red",
+			});
 		return parsedAmount === total;
 	};
-
+	const saveExpense = () => {
+		const split = parse(splits);
+		if (validateExpense(amount, split)) {
+			if (!paidBy || !title || !amount) {
+				notifications.show({
+					title: "Some fields is empty!",
+					color: "red",
+				});
+				return;
+			}
+			const paidByObj = splits.find((split) => split.username === paidBy);
+			const paidByProper = {
+				userId: paidByObj.userId,
+				username: paidBy,
+			};
+			onSubmit(title, parseInt(amount), paidByProper, date, split);
+			setTitle("");
+			setAmount(0);
+			setPaidBy(null);
+			setDate(new Date());
+			close();
+		}
+	};
 	const inputSplits = splits?.map((split, index) => {
 		return (
 			<Input.Wrapper
@@ -122,33 +150,7 @@ function ExpenseModal({ close, opened, onSubmit, members }) {
 
 					<Space h={"md"} />
 
-					<Button
-						onClick={() => {
-							const split = parse(splits);
-							if (validateExpense(amount, split)) {
-								const paidByObj = splits.find(
-									(split) => split.username === paidBy
-								);
-								const paidByProper = {
-									userId: paidByObj.userId,
-									username: paidBy,
-								};
-								onSubmit(
-									title,
-									parseInt(amount),
-									paidByProper,
-									date,
-									split
-								);
-								setTitle("");
-								setAmount(0);
-								setPaidBy(null);
-								setDate(new Date());
-								close();
-							}
-						}}
-						size='md'
-						fullWidth>
+					<Button onClick={saveExpense} size='md' fullWidth>
 						Add
 					</Button>
 				</div>
