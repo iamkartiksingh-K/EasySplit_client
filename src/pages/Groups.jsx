@@ -5,11 +5,13 @@ import api from "../../api";
 import { Link, Navigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../contexts/AuthContext";
-import { useForceUpdate } from "../hooks/useForceUpdate";
 import { IconPlus } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
+import { useRefresh } from "../hooks/useRefresh";
+import { IconRefresh } from "@tabler/icons-react";
 function Groups() {
 	const [groups, setGroups] = useState([]);
+	const [value, update] = useRefresh();
 	const { isLoggedIn, userId } = useContext(AuthContext);
 	const [opened, { open, close }] = useDisclosure(false);
 	const [groupName, setGroupName] = useInputState("");
@@ -26,7 +28,7 @@ function Groups() {
 			.catch((error) => {
 				console.log(error);
 			});
-	}, []);
+	}, [value]);
 
 	const addGroup = async () => {
 		console.log(groupMembers);
@@ -161,12 +163,17 @@ function Groups() {
 			</Modal>
 			<Group justify='space-between' m={"md"}>
 				<Title>My Groups</Title>
-				<Button
-					color={"myColor"}
-					onClick={open}
-					leftSection={<IconPlus size={20} />}>
-					Add Group
-				</Button>
+				<Group>
+					<Button variant='light'>
+						<IconRefresh onClick={update} />
+					</Button>
+					<Button
+						color={"myColor"}
+						onClick={open}
+						leftSection={<IconPlus size={20} />}>
+						Add Group
+					</Button>
+				</Group>
 			</Group>
 			<Grid className='mt-8'>{renderedGroups}</Grid>
 		</>
