@@ -46,7 +46,7 @@ function ExpenseModal({ close, opened, onSubmit, members }) {
 		}, 0);
 		if (parsedAmount !== total)
 			notifications.show({
-				title: "The sum of splits is not equal the amount paid",
+				title: "The sum of splits is not equal to the amount paid",
 				color: "red",
 			});
 		return parsedAmount === total;
