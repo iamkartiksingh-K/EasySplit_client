@@ -2,10 +2,15 @@ import ExpenseCard from "../components/ExpenseCard";
 import api from "../../api";
 import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../contexts/AuthContext";
-import { Stack, Title } from "@mantine/core";
+import { Group, Stack, Title, Button } from "@mantine/core";
+import { IconRefresh } from "@tabler/icons-react";
+import { useRefresh } from "../hooks/useRefresh";
+
 function Expenses() {
 	const [expenses, setExpenses] = useState([]);
 	const { userId } = useContext(AuthContext);
+	const [value, update] = useRefresh();
+
 	useEffect(() => {
 		api.get("expenses/")
 			.then((result) => {
@@ -15,7 +20,7 @@ function Expenses() {
 			.catch((err) => {
 				console.log(err);
 			});
-	}, []);
+	}, [value]);
 	const expenseList = expenses.map((currExpense) => {
 		const yourSplit = currExpense.split.find(
 			(user) => userId === user.userId
@@ -42,9 +47,15 @@ function Expenses() {
 	});
 	return (
 		<>
-			<Title order={1} m={"md"}>
-				All Expenses
-			</Title>
+			<Group justify='space-between'>
+				<Title order={1} m={"md"}>
+					All Expenses
+				</Title>
+				<Button variant='light'>
+					<IconRefresh onClick={update} />
+				</Button>
+			</Group>
+
 			<Stack>{expenseList}</Stack>
 		</>
 	);
