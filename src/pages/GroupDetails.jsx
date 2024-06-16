@@ -23,6 +23,7 @@ import {
 	IconScale,
 	IconArrowDownRight,
 	IconArrowUpRight,
+	IconRefresh,
 } from "@tabler/icons-react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../../api";
@@ -35,9 +36,10 @@ import StatusCard from "../components/StatusCard";
 import Edit from "../components/Edit";
 import SettleExpenses from "../components/SettleExpenses";
 import { notifications } from "@mantine/notifications";
-
+import { useRefresh } from "../hooks/useRefresh";
 function GroupDetails() {
 	const { userId } = useContext(AuthContext);
+	const [value, update] = useRefresh();
 	const { groupId } = useParams();
 	const [groupData, setGroupData] = useState({});
 	const [opened, { open, close }] = useDisclosure(false);
@@ -51,6 +53,7 @@ function GroupDetails() {
 	const navigate = useNavigate();
 
 	useEffect(() => {
+		console.log("here");
 		async function init() {
 			try {
 				const response = await api.get(`groups/${groupId}`);
@@ -69,7 +72,8 @@ function GroupDetails() {
 			}
 		}
 		init();
-	}, []);
+	}, [value]);
+
 	const submit = async (title, amount, paidBy, date, split) => {
 		const expense = {
 			description: title,
@@ -275,9 +279,9 @@ function GroupDetails() {
 		);
 	});
 
-	const balanceInfo =
-		groupData.balances &&
-		groupData.balances.find((balance) => balance.userId === userId);
+	const balanceInfo = groupData?.balances?.find(
+		(balance) => balance.userId === userId
+	);
 
 	return (
 		<div className='h-full overflow-clip pb-3'>
@@ -314,6 +318,9 @@ function GroupDetails() {
 					</Edit>
 				</Group>
 				<Group>
+					<Button variant='light'>
+						<IconRefresh onClick={update} />
+					</Button>
 					<Button onClick={getTransactions}>Settle Expenses</Button>
 					<Button
 						color={"red"}
@@ -338,7 +345,7 @@ function GroupDetails() {
 				<StatusCard
 					className='grow'
 					title={"You Owe"}
-					value={balanceInfo && balanceInfo.youOwe}
+					value={balanceInfo?.youOwe}
 					color='red'
 					icon={<IconArrowDownRight />}
 					iconColor={"red"}
@@ -346,7 +353,7 @@ function GroupDetails() {
 				<StatusCard
 					className='grow'
 					title={"You Are Owed"}
-					value={balanceInfo && balanceInfo.youAreOwed}
+					value={balanceInfo?.youAreOwed}
 					color='green'
 					icon={<IconArrowUpRight />}
 					iconColor='green'

@@ -4,21 +4,20 @@ import GroupCard from "../components/GroupCard";
 import api from "../../api";
 import { Link, Navigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
-import userDataContext from "../contexts/userDataContext";
 import { AuthContext } from "../contexts/AuthContext";
-import { useForceUpdate } from "../hooks/useForceUpdate";
 import { IconPlus } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
+import { useRefresh } from "../hooks/useRefresh";
+import { IconRefresh } from "@tabler/icons-react";
 function Groups() {
-	const { groups, setGroups } = useContext(userDataContext);
+	const [groups, setGroups] = useState([]);
+	const [value, update] = useRefresh();
 	const { isLoggedIn, userId } = useContext(AuthContext);
 	const [opened, { open, close }] = useDisclosure(false);
 	const [groupName, setGroupName] = useInputState("");
 	const [groupMembers, setGroupMembers] = useState([]);
 	const [memberName, setMemberName] = useInputState("");
 	const [cover, setCover] = useInputState("");
-	const [value, update] = useForceUpdate();
-	const [addMemberStatus, setAddMemberStatus] = useState("");
 	if (!isLoggedIn) return <Navigate to={"../login"} />;
 	useEffect(() => {
 		api.get("groups")
@@ -94,10 +93,7 @@ function Groups() {
 				});
 			});
 	};
-	const renderedGroups = groups.map((group) => {
-		const balance = group.balances.find(
-			(balance) => balance.userId === userId
-		);
+	const renderedGroups = groups?.map((group) => {
 		return (
 			<Grid.Col
 				span={{ xs: 12, sm: 6, md: 6, lg: 4, xl: 3 }}
@@ -107,8 +103,8 @@ function Groups() {
 						coverImg={group.cover}
 						groupId={group._id}
 						title={group.name}
-						memberCount={group.members.length}
-						balance={balance}
+						memberCount={group.memberCount}
+						balance={group.balance}
 					/>
 				</Link>
 			</Grid.Col>
@@ -167,12 +163,17 @@ function Groups() {
 			</Modal>
 			<Group justify='space-between' m={"md"}>
 				<Title>My Groups</Title>
-				<Button
-					color={"myColor"}
-					onClick={open}
-					leftSection={<IconPlus size={20} />}>
-					Add Group
-				</Button>
+				<Group>
+					<Button variant='light'>
+						<IconRefresh onClick={update} />
+					</Button>
+					<Button
+						color={"myColor"}
+						onClick={open}
+						leftSection={<IconPlus size={20} />}>
+						Add Group
+					</Button>
+				</Group>
 			</Group>
 			<Grid className='mt-8'>{renderedGroups}</Grid>
 		</>
