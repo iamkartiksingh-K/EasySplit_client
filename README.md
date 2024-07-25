@@ -1,5 +1,10 @@
 # EasySplit
 EasySplit is a group expense tracker, where you can create groups, add members, and add expenses with variable splits and it also provides the minimum transactions needed to settle debts.
+
+
+https://github.com/user-attachments/assets/562b78b0-57d3-4f4e-acee-a56a1197fea8
+
+
 ### How to use
 ```bash
 npm install
