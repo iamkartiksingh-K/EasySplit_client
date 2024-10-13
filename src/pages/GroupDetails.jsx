@@ -88,8 +88,21 @@ function GroupDetails() {
 			const result = await api.post("/expenses", {
 				data: expense,
 			});
-
+			console.log(expenses)
 			setExpenses([...expenses, result.data.data]);
+			const response = await api.get(`groups/${groupId}`);
+			const groupInfo = response.data.data;
+			setGroupData(groupInfo);
+		} catch (error) {
+			console.log(error);
+		}
+	};
+	const deleteExpense = async (id) => {
+		
+		try {
+			const result = await api.delete(`/expenses/${groupId}/${id}`);
+
+			setExpenses(expenses.filter(expense => expense._id !== id))
 			const response = await api.get(`groups/${groupId}`);
 			const groupInfo = response.data.data;
 			setGroupData(groupInfo);
@@ -241,6 +254,7 @@ function GroupDetails() {
 		return (
 			<ExpenseCard
 				key={expense._id}
+				id={expense._id}
 				title={expense.description}
 				amount={expense.amount}
 				payer={expense.paidBy.username}
@@ -249,6 +263,7 @@ function GroupDetails() {
 				yourSplit={yourSplit}
 				allSplits={expense.split}
 				paidByUser={expense.paidBy.userId === userId}
+				deleteExpense = {deleteExpense}
 			/>
 		);
 	});

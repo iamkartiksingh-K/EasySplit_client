@@ -9,8 +9,9 @@ import {
 	Popover,
 	Table,
 } from "@mantine/core";
-import { IconLicense } from "@tabler/icons-react";
+import { IconLicense, IconTrash } from "@tabler/icons-react";
 function ExpenseCard({
+	id,
 	title,
 	amount,
 	payer,
@@ -20,6 +21,7 @@ function ExpenseCard({
 	paidByUser,
 	showBadge,
 	allSplits,
+	deleteExpense
 }) {
 	const splitList = allSplits.map((split) => {
 		return (
@@ -90,6 +92,7 @@ function ExpenseCard({
 								: yourSplit?.amount || 0}
 						</Text>
 					</Stack>
+					<p className="cursor-pointer flex items-center justify-center text-red-300" onClick={()=>deleteExpense(id)}><IconTrash/></p>
 				</div>
 			</Group>
 		</Card>

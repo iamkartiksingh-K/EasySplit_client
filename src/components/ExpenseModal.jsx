@@ -21,6 +21,7 @@ function ExpenseModal({ close, opened, onSubmit, members }) {
 	const [splits, setSplits] = useState([]);
 
 	useEffect(() => {
+		console.log(members)
 		const tempSplits = members?.map((member) => {
 			return {
 				userId: member.userId,
@@ -29,7 +30,7 @@ function ExpenseModal({ close, opened, onSubmit, members }) {
 			};
 		});
 		setSplits(tempSplits);
-	}, [members]);
+	}, [members, opened]);
 	const parse = (splits) => {
 		const parsedSplits = splits?.map((split) => {
 			return {
@@ -40,7 +41,7 @@ function ExpenseModal({ close, opened, onSubmit, members }) {
 		return parsedSplits;
 	};
 	const validateExpense = (amount, splits) => {
-		const parsedAmount = parseInt(amount);
+		const parsedAmount = Number.parseInt(amount);
 		const total = splits.reduce((sum, split) => {
 			return sum + split?.amount;
 		}, 0);
@@ -66,11 +67,13 @@ function ExpenseModal({ close, opened, onSubmit, members }) {
 				userId: paidByObj.userId,
 				username: paidBy,
 			};
-			onSubmit(title, parseInt(amount), paidByProper, date, split);
+			console.log(split)
+			onSubmit(title, Number.parseInt(amount), paidByProper, date, split);
 			setTitle("");
 			setAmount(0);
-			setPaidBy(null);
+			setPaidBy("");
 			setDate(new Date());
+			setSplits([])
 			close();
 		}
 	};

@@ -31,7 +31,7 @@ function Member({ name, removeMember, userId, admin, me, leaveGroup }) {
 						<IconCrown className='text-yellow-500' />
 					)}
 				</Group>
-				{leaveIcon || removeIcon}
+				{/* {leaveIcon || removeIcon} */}
 			</Group>
 		</Card>
 	);
