@@ -67,8 +67,8 @@ function ExpenseCard({
 						</Group>
 					</div>
 				</Group>
-
-				<div className='flex justify-between w-full md:w-5/12'>
+				
+				<div className='flex justify-between w-full lg:w-5/12'>
 					<Stack justify='flex-start' gap={0} className='w-1/2'>
 						<Text size='sm' c='dimmed' className='text-right'>
 							Paid by {payer}
@@ -80,7 +80,7 @@ function ExpenseCard({
 					<Divider orientation='vertical' />
 					<Stack justify='flex-start' gap={0} className='w-1/3'>
 						<Text size='sm' c='dimmed'>
-							{paidByUser ? "You lent" : `You Owe`}
+							{paidByUser ? "You lent" : "You Owe"}
 						</Text>
 						<Text
 							size='lg'
